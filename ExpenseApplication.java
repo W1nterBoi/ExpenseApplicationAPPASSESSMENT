@@ -17,7 +17,9 @@ public class ExpenseApplication {
             boolean cont = true;
             while(cont){
                 System.out.println("\n\n---EXPENSE TRACKER---\n1. Add Expense \n2. View Month Expense \n3. Month Total by Category \n4. Update Expense \n5. Delete Expense \n6. Exit");
+                System.out.print("Enter Choice: ");
                 choice = get.nextInt();
+                get.nextLine();
                 switch(choice){
                     case 1:
                         addExpense();
@@ -48,19 +50,19 @@ public class ExpenseApplication {
     }
 
     static void createTable() throws SQLException{
-        String sql = "CREATE TABLE IF NOT EXISTS expenses (id INT AUTO_INCREMENT PRIMARY KEY, expense_dare DATE, category VARCHAR(50), description VARCHAR(200), amount DECIMAL(10, 2))";
+        String sql = "CREATE TABLE IF NOT EXISTS expenses (id INT AUTO_INCREMENT PRIMARY KEY, expense_date DATE, category VARCHAR(50), description VARCHAR(200), amount DECIMAL(10, 2))";
         Statement statement = connect.createStatement();
         statement.executeUpdate(sql);
         statement.close();
     }
     static void addExpense() throws SQLException{
-        System.out.println("Enter Date        : ");
+        System.out.print("Enter Date        : ");
         Date date = Date.valueOf(get.nextLine());
-        System.out.println("Enter Category    : ");
+        System.out.print("Enter Category    : ");
         String category = get.nextLine();
-        System.out.println("Enter Description : ");
+        System.out.print("Enter Description : ");
         String description = get.nextLine();
-        System.out.println("Enter Amount      : ");
+        System.out.print("Enter Amount      : ");
         double amount = get.nextDouble();
 
         String sql = "INSERT INTO expenses (expense_date, category, description, amount) VALUES (?, ?, ?, ?)";
@@ -74,9 +76,9 @@ public class ExpenseApplication {
         statement.close();
     }
     static void viewByMonth() throws SQLException{
-        System.out.println("Year  : " );
+        System.out.print("Year  : " );
         int year = get.nextInt();
-        System.out.println("Month : " );
+        System.out.print("Month : " );
         int month = get.nextInt();
 
         String sql = "SELECT * FROM expenses WHERE YEAR(expense_date) = ? AND MONTH(expense_date) = ? ORDER BY expense_date";
@@ -96,9 +98,9 @@ public class ExpenseApplication {
         statement.close();
     }
     static void totalsByCategory() throws SQLException{
-        System.out.println("Year  : " );
+        System.out.print("Year  : " );
         int year = get.nextInt();
-        System.out.println("Month : " );
+        System.out.print("Month : " );
         int month = get.nextInt();
  
         String sql = "SELECT category, SUM(amount) AS total FROM expenses WHERE YEAR(expense_date) = ? AND MONTH(expense_date) = ? GROUP BY category";
@@ -117,6 +119,7 @@ public class ExpenseApplication {
     static void updateExpenses() throws SQLException{
         System.out.print("ID of expense   : ");
         int id = get.nextInt();
+        get.nextLine();
         System.out.print("New date        : ");
         Date date = Date.valueOf(get.nextLine());
         System.out.print("New category    : ");
@@ -135,17 +138,18 @@ public class ExpenseApplication {
         statement.setInt(5, id);
         statement.executeUpdate();
         statement.close();
-        System.out.println("Expense updated.");
+        System.out.print("Expense updated.");
     }
     static void deleteExpenses() throws SQLException{
         System.out.print("ID of expense: ");
         int id = get.nextInt();
+        get.nextLine();
  
         PreparedStatement statement = connect.prepareStatement("DELETE FROM expenses WHERE id = ?");
         statement.setInt(1, id);
         statement.executeUpdate();
         statement.close();
-        System.out.println("Expense deleted.");
+        System.out.print("Expense deleted.");
 
     }
 }
