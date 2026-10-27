@@ -1,5 +1,8 @@
 # ExpenseApplicationAPPASSESSMENT
 Code for the APP Assessment using jdbc from Java
+Question: Develop an application to record personal or departmental expenses.
+
+Insert expense date, category, description, and amount; display expenses for a selected month; calculate totals by category; update or delete an expense.
 
 Output:
 
