@@ -23,12 +23,16 @@ public class ExpenseApplication {
                         addExpense();
                         break;
                     case 2:
+                        viewByMonth();
                         break;
                     case 3:
+                        totalsByCategory();
                         break;
                     case 4:
+                        updateExpenses();
                         break;
                     case 5:
+                        deleteExpenses();
                         break;
                     case 6:
                         cont = false;
@@ -38,7 +42,7 @@ public class ExpenseApplication {
             }
             
         } catch (SQLException e) {
-            System.out.println("Error");
+            System.out.println("Error" + e.getMessage());
         }
 
     }
@@ -83,17 +87,67 @@ public class ExpenseApplication {
         System.out.printf("%-5s %-12s %-15s %-25s %10s%n", "ID", "Date", "Category", "Description", "Amount");
     
         double total = 0;
-        int count = 0;
         while(results.next()){
             System.out.printf("%-5d %-12s %-15s %-25s %10.2f%n", results.getInt("id"), results.getDate("expense_date"), results.getString("category"), results.getString("description"), results.getDouble("amount"));
             total = total + results.getDouble("amount");
-            count++;
         }
         System.out.printf("Month total: %.2f%n", total);
         results.close();
         statement.close();
     }
+    static void totalsByCategory() throws SQLException{
+        System.out.println("Year  : " );
+        int year = get.nextInt();
+        System.out.println("Month : " );
+        int month = get.nextInt();
+ 
+        String sql = "SELECT category, SUM(amount) AS total FROM expenses WHERE YEAR(expense_date) = ? AND MONTH(expense_date) = ? GROUP BY category";
+        PreparedStatement statement = connect.prepareStatement(sql);
+        statement.setInt(1, year);
+        statement.setInt(2, month);
+        ResultSet results = statement.executeQuery();
+ 
+        System.out.printf("%-15s %10s%n", "Category", "Total");
+        while (results.next()) {
+            System.out.printf("%-15s %10.2f%n", results.getString("category"), results.getDouble("total"));
+        }
+        results.close();
+        statement.close();
+    }
+    static void updateExpenses() throws SQLException{
+        System.out.print("ID of expense   : ");
+        int id = get.nextInt();
+        System.out.print("New date        : ");
+        Date date = Date.valueOf(get.nextLine());
+        System.out.print("New category    : ");
+        String category = get.nextLine();
+        System.out.print("New description : ");
+        String description = get.nextLine();
+        System.out.print("New amount      : ");
+        double amount = Double.parseDouble(get.nextLine());
+ 
+        String sql = "UPDATE expenses SET expense_date = ?, category = ?, description = ?, amount = ? WHERE id = ?";
+        PreparedStatement statement = connect.prepareStatement(sql);
+        statement.setDate(1, date);
+        statement.setString(2, category);
+        statement.setString(3, description);
+        statement.setDouble(4, amount);
+        statement.setInt(5, id);
+        statement.executeUpdate();
+        statement.close();
+        System.out.println("Expense updated.");
+    }
+    static void deleteExpenses() throws SQLException{
+        System.out.print("ID of expense: ");
+        int id = get.nextInt();
+ 
+        PreparedStatement statement = connect.prepareStatement("DELETE FROM expenses WHERE id = ?");
+        statement.setInt(1, id);
+        statement.executeUpdate();
+        statement.close();
+        System.out.println("Expense deleted.");
 
+    }
 }
 
 
